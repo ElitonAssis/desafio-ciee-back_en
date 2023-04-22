@@ -1,13 +1,16 @@
 package br.com.eliton.assis.model.base_entity.game;
 
 import br.com.eliton.assis.model.base_entity.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -24,14 +27,23 @@ public class GameEntity extends BaseEntity {
     @Column(name = "DESENVOLVEDORA")
     String desenvolvedora;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "gameEntity")
-    @JsonManagedReference
-    List<CategoriaEntity> categoriaEntityList;
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(
+            name = "game_genero",
+            joinColumns = @JoinColumn(name = "GAME_ID"),
+            inverseJoinColumns = @JoinColumn(name = "GENERO_ID"))
+    //@JsonManagedReference
+    private Set<CategoriaEntity> generos = new HashSet<>();
 
-    @PrePersist
     @PreUpdate
-    public void preencher() {
-        if (categoriaEntityList != null)
-            categoriaEntityList.forEach(c -> c.setGameEntity(this));
+    @PrePersist
+    public void preUpdate() {
+        if (generos != null) {
+            for (CategoriaEntity categoria : generos) {
+                categoria.getGames().add(this);
+            }
+        }
     }
+
 }

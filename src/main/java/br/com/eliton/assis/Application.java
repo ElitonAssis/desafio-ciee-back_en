@@ -2,11 +2,13 @@ package br.com.eliton.assis;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @Configuration
-@EnableJpaRepositories(basePackages = "com.example.myapp.repository")
+@ComponentScan
+//@EnableJpaRepositories(basePackages = "com.example.myapp.repository")
 @SpringBootApplication
 public class Application {
 
