@@ -27,4 +27,16 @@ public class GameController {
     public ResponseEntity<?> cadastroJogo(@RequestBody GameEntity obj) {
         return this.gameService.save(obj);
     }
+    @PostMapping("delete")
+    public ResponseEntity<?>delete(@RequestBody GameEntity obj){
+        return  this.gameService.deleteTemp(obj);
+    }
+    @GetMapping("get-categoria/{id}")
+    public ResponseEntity<?>getCategoria(@PathVariable("id")Integer id ){
+        return  this.gameService.getCategoria(id);
+    }
+//    @PostMapping("update" )
+//   public ResponseEntity<?>update(@RequestBody GameEntity){
+//
+//    }
 }

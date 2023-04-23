@@ -4,6 +4,7 @@ import br.com.eliton.assis.model.base_entity.game.CategoriaEntity;
 import br.com.eliton.assis.repository.game_repository.GameRepository;
 import br.com.eliton.assis.model.base_entity.game.GameEntity;
 import br.com.eliton.assis.model.base_entity.utils.ResponseMessage;
+import br.com.eliton.assis.repository.genero_repository.GeneroRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,8 @@ import java.util.stream.Collectors;
 public class GameService {
     @Autowired()
     GameRepository gameRepository;
+    @Autowired
+    GeneroRepository categoriaRepository;
 
     private ResponseMessage responseMessage(String msg) {
         ResponseMessage responseMessage = new ResponseMessage();
@@ -64,12 +67,37 @@ public class GameService {
             categoriaEntityList.addAll(gameEntity.getGeneros());
         }
         categoriaEntityList = categoriaEntityList.stream().distinct().collect(Collectors.toList());
-        for(CategoriaEntity categoria: categoriaEntityList){
+        for (CategoriaEntity categoria : categoriaEntityList) {
             map.put(categoria.getNome(), list.stream().filter(g -> g.getGeneros().stream().filter(categoriaEntity ->
                     categoriaEntity.getId().equals(categoria.getId())).toList().size() > 0).collect(Collectors.toList()));
         }
-        map.put("Sem categoria",list.stream().filter(gameEntity -> gameEntity.getGeneros().isEmpty()).collect(Collectors.toList()));
+        List<GameEntity> temp = list.stream().filter(gameEntity -> gameEntity.getGeneros().isEmpty()).toList();
+        if (!temp.isEmpty())
+            map.put("Sem categoria", temp);
 
         return map;
+    }
+
+    public ResponseEntity<?> deleteTemp(GameEntity game) {
+        try {
+            game.setDeletado(true);
+            this.gameRepository.save(game);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(responseMessage("Deletado com sucesso"), HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> getCategoria(Integer id) {
+        try {
+            List<CategoriaEntity> lista = this.categoriaRepository.findCategorias(id).orElse(null);
+            if (Objects.isNull(lista) || lista.isEmpty()) throw new Exception("Não foi possível encontrar gêneros cadastros");
+
+            return new ResponseEntity<>(lista, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 }
