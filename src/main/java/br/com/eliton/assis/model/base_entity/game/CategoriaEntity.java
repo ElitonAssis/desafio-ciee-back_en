@@ -2,7 +2,9 @@ package br.com.eliton.assis.model.base_entity.game;
 
 import br.com.eliton.assis.model.base_entity.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +21,6 @@ public class CategoriaEntity extends BaseEntity {
     String nome;
 
     @ManyToMany(mappedBy = "generos")
-    // @JsonBackReference
+    //@JsonBackReference
     private Set<GameEntity> games = new HashSet<>();
 }

@@ -17,15 +17,14 @@ public class GameController {
 
     @Autowired
     GameService gameService;
-    @GetMapping("teste")
-    public ResponseEntity<?> teste() {
-        return new ResponseEntity<>("hello", HttpStatus.OK);
+
+    @GetMapping("get-all")
+    public ResponseEntity<?> getAll() {
+        return this.gameService.getAll();
     }
 
     @PostMapping("cadastro-jogo")
     public ResponseEntity<?> cadastroJogo(@RequestBody GameEntity obj) {
-
-
-       return this.gameService.save(obj);
+        return this.gameService.save(obj);
     }
 }

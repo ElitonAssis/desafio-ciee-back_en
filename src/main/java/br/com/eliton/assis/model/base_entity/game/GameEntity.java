@@ -1,8 +1,11 @@
 package br.com.eliton.assis.model.base_entity.game;
 
 import br.com.eliton.assis.model.base_entity.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,13 +30,18 @@ public class GameEntity extends BaseEntity {
     @Column(name = "DESENVOLVEDORA")
     String desenvolvedora;
 
+    @Transient
+    List<CategoriaEntity>categoriaEntityList;
+
     @JsonIgnore
+    //@JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
+
     @ManyToMany
     @JoinTable(
             name = "game_genero",
             joinColumns = @JoinColumn(name = "GAME_ID"),
             inverseJoinColumns = @JoinColumn(name = "GENERO_ID"))
-    //@JsonManagedReference
+
     private Set<CategoriaEntity> generos = new HashSet<>();
 
     @PreUpdate
