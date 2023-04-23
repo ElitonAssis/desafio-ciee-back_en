@@ -35,6 +35,10 @@ public class GameController {
     public ResponseEntity<?>getCategoria(@PathVariable("id")Integer id ){
         return  this.gameService.getCategoria(id);
     }
+    @PostMapping("remove-category")
+    public ResponseEntity<?>removeCategory(@RequestBody Map<String,Integer> map ){
+        return  this.gameService.removeCategory(map);
+    }
 //    @PostMapping("update" )
 //   public ResponseEntity<?>update(@RequestBody GameEntity){
 //

@@ -71,7 +71,7 @@ public class GameService {
             map.put(categoria.getNome(), list.stream().filter(g -> g.getGeneros().stream().filter(categoriaEntity ->
                     categoriaEntity.getId().equals(categoria.getId())).toList().size() > 0).collect(Collectors.toList()));
         }
-        List<GameEntity> temp = list.stream().filter(gameEntity -> gameEntity.getGeneros().isEmpty()).toList();
+        List<GameEntity> temp = list.stream().filter(gameEntity -> gameEntity.getGeneros().isEmpty()).toList().stream().distinct().collect(Collectors.toList());
         if (!temp.isEmpty())
             map.put("Sem categoria", temp);
 
@@ -92,12 +92,28 @@ public class GameService {
     public ResponseEntity<?> getCategoria(Integer id) {
         try {
             List<CategoriaEntity> lista = this.categoriaRepository.findCategorias(id).orElse(null);
-            if (Objects.isNull(lista) || lista.isEmpty()) throw new Exception("Não foi possível encontrar gêneros cadastros");
+            if (Objects.isNull(lista) || lista.isEmpty())
+                throw new Exception("Não foi possível encontrar gêneros cadastros");
 
             return new ResponseEntity<>(lista, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    public ResponseEntity<?> removeCategory(Map<String, Integer> map) {
+        Integer gameId, categoriaId;
+        try {
+            gameId = map.get("gameId");
+            categoriaId = map.get("categoriaId");
+            this.categoriaRepository.removeFromGame(gameId,categoriaId);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(responseMessage("Deletado com sucesso"), HttpStatus.OK);
     }
 }
